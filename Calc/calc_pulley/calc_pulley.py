@@ -4,5 +4,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-plt.plot( [3,1,4,1,5,9,2,6,5] )
-plt.show()
+file = "val_trace.txt"
+with open(file, "w", encoding = "utf_8") as fileobj:
+	tmp = 3.14
+	fileobj.write(str(tmp))
