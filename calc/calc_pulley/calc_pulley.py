@@ -28,6 +28,10 @@ max_extention_speed_mms     = motor_noload_rpm * virtual_driver_radius_mm * m.pi
 max_extention_time_ms       = 250 / max_extention_speed_mms * 10E3
 driver_angle_range_deg      = (max_leg_height_mm - min_leg_height_mm) / virtual_driver_radius_mm
 
+def showGraph():
+    plt.plot( [3,1,4,1,5,9,2,6,5] )
+    plt.show()
+ 
 def dataPlot():
     file = "val_trace.txt"
     with open(file, "w", encoding = "utf_8") as fileobj:
@@ -57,3 +61,4 @@ if __name__ == '__main__':
         h = np.append(h, h[i] + leg_height_step_mm)
 
     print(h)
+    showGraph()
