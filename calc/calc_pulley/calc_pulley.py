@@ -8,14 +8,14 @@ import math as m
 
 # Leg kinematics design parameters
 min_leg_height_mm           = 50.0
-max_leg_height_mm           = 250.0
+max_leg_height_mm           = 100.0
 leg_length                  = 125
 virtual_driver_radius_mm    = 95
 knee_pulley_radius_mm       = 14
 driver_init_radius_mm       = 5
 knee_driver_distance_mm     = 60
 # Calculation parameter
-leg_height_step_mm          = 0.5
+leg_height_step_mm          = 5.0
 
 # Servo motor specification parameters
 motor_stall_torque_Nm       = 8.9
@@ -45,20 +45,31 @@ def getSquareFromTwoValue(value1, value2):
     return m.sqrt( m.pow(value1, 2) + m.pow(value2, 2) )
 
 if __name__ == '__main__':
+    # Val
+    r_d = driver_init_radius_mm
     # Const
     r_k = knee_pulley_radius_mm
-    r_d = driver_init_radius_mm
+    l   = leg_length
     f   = knee_driver_distance_mm
     # Array
-    h = np.array([min_leg_height_mm], dtype=float)
-    g   = m.asin( (r_k - r_d) / f )
-    s   = r_k * g
-    t   = getSquareFromTwoValue( f, (r_d - r_k) )
-    u   = 0
-    W   = s + t + u
+    h   = np.array( [min_leg_height_mm], dtype=float )
+    psi = np.array( [np.arcsin(h / (2*l))], dtype=float )
+    g   = np.array( [np.arcsin( (r_k - r_d) / f )], dtype=float)
+    s   = np.array( [r_k * g], dtype=float )
+    t   = np.array( [getSquareFromTwoValue( f, (r_d - r_k) )], dtype=float )
+    u   = np.array( [0], dtype=float )
+    W   = np.array( [s + t + u], dtype=float )
+    X   = np.array( [0], dtype=float )
 
-    for i in range(0, int((max_leg_height_mm - min_leg_height_mm) / leg_height_step_mm)):
-        h = np.append(h, h[i] + leg_height_step_mm)
+    for i in range(1, int((max_leg_height_mm - min_leg_height_mm) / leg_height_step_mm)):
+        h   = np.append( h  , h[i-1] + leg_height_step_mm )
+        psi = np.append( psi, np.arcsin(h[i] / (2*l)) )
+        X   = np.append( X  , [r_k * (psi[i]-psi[i-1])] )
+        # g   = np.append( g  , np. np.arcsin( (r_k - r_d) / f ))
 
+    np.set_printoptions(precision=1, floatmode='fixed')
     print(h)
-    showGraph()
+    np.set_printoptions(precision=3, floatmode='fixed')
+    print(psi)
+    print(X)
+    # showGraph()
