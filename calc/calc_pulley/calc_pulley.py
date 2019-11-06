@@ -9,14 +9,15 @@ import math as m
 
 # Leg kinematics design parameters
 h_min       = 50.0
-h_max       = 220.0
+h_max       = 240.0
 l           = 125.0
-vdr         = 80.0
+vdr         = 75.0
 rk          = 15.0
 rd_init     = 4.0
-f           = 30.0
+f           = 60.0
 # Calculation parameter
-hh_init     = 2.5
+hh_init     = 5.0
+hh_grad     = hh_init / 150
 # Servo motor specification & leg parameters
 motor_stall_torque_Nm       = 8.9
 motor_noload_rpm            = 66
@@ -112,12 +113,13 @@ def searchCurrentRd(_rd, _ddar, _d_xt, gain = 0.2, pass_error = 10E-5):
 
 if __name__ == '__main__':
     # Leg entire structure
-    h    = np.array( [h_min], dtype=float )     # Distance between upper pitch axis and lower pitch axis [mm]
+    hh   = np.array( [hh_init], dtype=float )               # Gradient of leg height var
+    h    = np.array( [h_min], dtype=float )                 # Distance between upper pitch axis and lower pitch axis [mm]
     dar  = np.array( [0], dtype=float )                     # Angle of driver [rad]
     psi  = np.array( [get_psi(h[0])], dtype=float )         # Knee inside angle [rad]
     d_xt = np.array( [0], dtype=float )                     # Wire extension length diff
     # Driver pulley
-    rd   = np.array( [rd_init], dtype=float ) # Driver radius
+    rd   = np.array( [rd_init], dtype=float )               # Driver radius
     gar  = np.array( [get_gar(rd)], dtype=float)            # Wire gradient
     P    = np.array( [get_P(rd)], dtype=float)              # Driver pulley action point
     # Var for visual
@@ -128,7 +130,8 @@ if __name__ == '__main__':
     vis_rd  = []
     
     for n in range(1, num_loop):
-        h    = np.append( h, h[n-1] + hh_init )
+        hh   = np.append( hh, hh[n-1] - hh_grad )
+        h    = np.append( h, h[n-1] + hh[n] )
         dar  = np.append( dar, dar[n-1] + ddar )
         psi  = np.append( psi, get_psi(h[n]) )
         d_xt = np.append( d_xt, rk * (psi[n] - psi[n-1]) )
