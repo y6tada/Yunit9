@@ -1,0 +1,3 @@
+y6tada
+DESKTOP-DV0PHET 
+2019”N11ŒŽ14“ú  1:07:11
